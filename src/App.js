@@ -21,16 +21,19 @@ class App extends Component {
 
     componentDidMount() {
         this.loadData();
+        console.log(this.state.data);
     }
 
     loadData() {
         top30Dax.forEach((entry) => {
             alpha.data.monthly_adjusted(entry.symbol).then(data => {
-                this.setState(prevState => ({
-                    data: [...prevState.data, {[entry.name] : data}]
-                }))
+                this.setState({data: [...this.state.data, ... [data]]})
             });
         });
+    }
+
+    calculateYearly() {
+        //TODO: parse monthly close points and calculate annual diff between Jan - Dec
     }
 
     render() {
@@ -40,9 +43,14 @@ class App extends Component {
                     <img src={logo} className="App-logo" alt="logo"/>
                     <h1 className="App-title">Welcome to React with alphaAdvantage</h1>
                 </header>
-                <p className="App-intro">
-                    {this.state.data ? JSON.stringify(this.state.data) : <span>No data</span>}
-                </p>
+                <div className="App-intro">
+                    <h3>Top 30 DAX Companies</h3>
+                    {top30Dax.map((company,index) => {
+                        return <p key={index}>{company.name} :: {company.symbol}</p>
+                    })}
+                    <h3>Raw data provided by alphaAdvantage</h3>
+                    {this.state.data ? JSON.stringify(this.state.data[0]) : <span>No data</span>}
+                </div>
             </div>
         );
     }
